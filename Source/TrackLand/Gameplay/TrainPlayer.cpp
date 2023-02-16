@@ -36,7 +36,6 @@ void ATrainPlayer::Tick(float DeltaTime)
 	AActor *NewTrack = CheckForTracks();
 	if (NewTrack != nullptr)
 	{
-		UE_LOG(LogTemp, Display, TEXT("NewTrack: %s"), *NewTrack->GetActorNameOrLabel());
 		SplineRef = NewTrack;
 		Distance = 0;
 	}
@@ -140,49 +139,21 @@ AActor *ATrainPlayer::FindSplineReference()
 	if (SplineRef != nullptr)
 		IgnoreActors.Add(SplineRef);
 
-	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation() + (OverlapOffset * GetActorForwardVector()), OverlapRadius, TraceObjectTypes, ATrack::StaticClass(), IgnoreActors, Tracks);
+	UKismetSystemLibrary::SphereOverlapActors(
+		GetWorld(),
+		GetActorLocation() + (OverlapOffset * GetActorForwardVector()),
+		OverlapRadius,
+		TraceObjectTypes,
+		ATrack::StaticClass(),
+		IgnoreActors, Tracks);
 
 	if (Tracks.Num() > 0)
 	{
+		UE_LOG(LogTemp, Display, TEXT("Track Found: %s"), *Tracks[0]->GetActorNameOrLabel());
 		return Tracks[0];
 	}
 
 	return nullptr;
-}
-
-AActor *ATrainPlayer::CheckForTracks()
-{
-	AActor *TrackFound = FindSplineReference();
-
-	if (TrackFound != nullptr)
-	{
-		USplineComponent *SplineComponent = Cast<USplineComponent>(TrackFound->GetComponentByClass(USplineComponent::StaticClass()));
-		FVector SplineDirection = SplineComponent->GetDirectionAtSplinePoint(0, ESplineCoordinateSpace::World);
-		int SplineLength = SplineComponent->GetNumberOfSplinePoints();
-
-		FVector FirstPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::World);
-		FVector LastPoint = SplineComponent->GetLocationAtSplinePoint(SplineLength, ESplineCoordinateSpace::World);
-
-		if (GetActorLocation() == FirstPoint || GetActorLocation() == LastPoint)
-		{
-			if (GetActorLocation() == FirstPoint && GearIndex == 0)
-			{
-				InverseSpline = true;
-			}
-		}
-		else
-		{
-			int TrackDirection = SplineDirection.X > 0 ? 1 : 0;
-
-			if (TrackDirection != Direction)
-			{
-				UE_LOG(LogTemp, Display, TEXT("DIRECTION NOT DESIRED"));
-				return nullptr;
-			}
-		}
-	}
-
-	return TrackFound;
 }
 
 int ATrainPlayer::GetGearIndex()

@@ -32,7 +32,6 @@ protected:
 	AActor* FindSplineReference();
 	void MoveObjectAlongSpline(float DeltaTime);
 	void AdjustSpeedToGear();
-	AActor* CheckForTracks();
 
 	//Getters
 	UFUNCTION(BlueprintCallable)
