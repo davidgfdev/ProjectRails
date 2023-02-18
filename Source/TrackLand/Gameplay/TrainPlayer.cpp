@@ -33,13 +33,6 @@ void ATrainPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AActor *NewTrack = CheckForTracks();
-	if (NewTrack != nullptr)
-	{
-		SplineRef = NewTrack;
-		Distance = 0;
-	}
-
 	if (SplineRef != nullptr)
 	{
 		MoveObjectAlongSpline(DeltaTime);
@@ -154,6 +147,45 @@ AActor *ATrainPlayer::FindSplineReference()
 	}
 
 	return nullptr;
+}
+
+void ATrainPlayer::SwitchToNewTrack(AActor *Track, bool IsBackwards)
+{
+	if (SplineRef != nullptr)
+	{
+		if (Track == SplineRef)
+		{
+			return;
+		}
+
+		USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
+
+		if (IsBackwards)
+		{
+			FVector FirstPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::World);
+
+			double DistanceToPoint = FVector::Distance(FirstPoint, GetActorLocation());
+
+			if (DistanceToPoint < 300 && GearIndex == 0)
+			{
+				UE_LOG(LogTemp, Display, TEXT("BackwardsTrack"));
+				SplineRef = Track;
+				InverseSpline = true;
+			}
+		}
+		else
+		{
+			FVector LastPoint = SplineComponent->GetLocationAtSplinePoint(SplineComponent->GetNumberOfSplinePoints(), ESplineCoordinateSpace::World);
+
+			double DistanceToPoint = FVector::Distance(LastPoint, GetActorLocation());
+
+			if (DistanceToPoint < 300 && GearIndex > 0)
+			{
+				SplineRef = Track;
+				Distance = 0;
+			}
+		}
+	}
 }
 
 int ATrainPlayer::GetGearIndex()

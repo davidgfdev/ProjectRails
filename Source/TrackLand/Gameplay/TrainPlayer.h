@@ -28,16 +28,18 @@ protected:
 	void SwitchRight();
 	void SwitchLeft();
 
-	//Functions
-	AActor* FindSplineReference();
+	// Functions
+	AActor *FindSplineReference();
 	void MoveObjectAlongSpline(float DeltaTime);
 	void AdjustSpeedToGear();
 
-	//Getters
+	// Getters
 	UFUNCTION(BlueprintCallable)
 	int GetGearIndex();
 	UFUNCTION(BlueprintCallable)
 	int GetDirection();
+	UFUNCTION(BlueprintCallable)
+	void SwitchToNewTrack(AActor *Track, bool IsBackwards);
 
 	UPROPERTY(EditAnywhere)
 	float OverlapRadius;
@@ -63,7 +65,7 @@ protected:
 	bool InverseSpline = false;
 	/// 0 = Izquierda
 	/// 1 = Derecha
-	int Direction = 0; 
+	int Direction = 0;
 
 public:
 	// Called every frame
