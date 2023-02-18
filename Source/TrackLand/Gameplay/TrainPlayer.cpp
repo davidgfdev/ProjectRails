@@ -16,16 +16,7 @@ ATrainPlayer::ATrainPlayer()
 void ATrainPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	AActor *Track = FindSplineReference();
-	if (Track != nullptr)
-	{
-		SplineRef = Track;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Display, TEXT("COULDN'T FIND A VALID SPLINE"));
-	}
+	SplineRef = FIRST_TRACK;
 }
 
 // Called every frame
@@ -39,7 +30,7 @@ void ATrainPlayer::Tick(float DeltaTime)
 
 		if (Speed != TargetSpeed)
 		{
-			Speed = FMath::Lerp(Speed, TargetSpeed, DeltaTime * FMath::Pow(AccelerationRate, 2));
+			Speed = FMath::Lerp(Speed, TargetSpeed, DeltaTime * FMath::Pow(ACCELERATION_RATE, 2));
 		}
 	}
 	else
@@ -61,7 +52,7 @@ void ATrainPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputCompone
 
 void ATrainPlayer::AcceleratePressed()
 {
-	if (Speeds.Num() == 4)
+	if (SPEEDS.Num() == 4)
 	{
 		UE_LOG(LogTemp, Display, TEXT("SPEEDS ARE NOT SET!"));
 		return;
@@ -72,12 +63,12 @@ void ATrainPlayer::AcceleratePressed()
 		GearIndex++;
 	}
 
-	TargetSpeed = Speeds[GearIndex];
+	TargetSpeed = SPEEDS[GearIndex];
 }
 
 void ATrainPlayer::SlowPressed()
 {
-	if (Speeds.Num() == 4)
+	if (SPEEDS.Num() == 4)
 	{
 		UE_LOG(LogTemp, Display, TEXT("SPEEDS ARE NOT SET!"));
 		return;
@@ -88,7 +79,7 @@ void ATrainPlayer::SlowPressed()
 		GearIndex--;
 	}
 
-	TargetSpeed = Speeds[GearIndex];
+	TargetSpeed = SPEEDS[GearIndex];
 }
 
 void ATrainPlayer::SwitchRight()
@@ -119,36 +110,6 @@ void ATrainPlayer::MoveObjectAlongSpline(float DeltaTime)
 	SetActorRelativeTransform(NewTransform);
 }
 
-AActor *ATrainPlayer::FindSplineReference()
-{
-	TArray<AActor *> Tracks;
-
-	TArray<TEnumAsByte<EObjectTypeQuery>> TraceObjectTypes;
-	TraceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
-
-	TArray<AActor *> IgnoreActors;
-	IgnoreActors.Init(this, 1);
-
-	if (SplineRef != nullptr)
-		IgnoreActors.Add(SplineRef);
-
-	UKismetSystemLibrary::SphereOverlapActors(
-		GetWorld(),
-		GetActorLocation() + (OverlapOffset * GetActorForwardVector()),
-		OverlapRadius,
-		TraceObjectTypes,
-		ATrack::StaticClass(),
-		IgnoreActors, Tracks);
-
-	if (Tracks.Num() > 0)
-	{
-		UE_LOG(LogTemp, Display, TEXT("Track Found: %s"), *Tracks[0]->GetActorNameOrLabel());
-		return Tracks[0];
-	}
-
-	return nullptr;
-}
-
 void ATrainPlayer::SwitchToNewTrack(AActor *Track, bool IsBackwards)
 {
 	if (SplineRef != nullptr)
@@ -163,12 +124,10 @@ void ATrainPlayer::SwitchToNewTrack(AActor *Track, bool IsBackwards)
 		if (IsBackwards)
 		{
 			FVector FirstPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::World);
-
 			double DistanceToPoint = FVector::Distance(FirstPoint, GetActorLocation());
 
 			if (DistanceToPoint < 300 && GearIndex == 0)
 			{
-				UE_LOG(LogTemp, Display, TEXT("BackwardsTrack"));
 				SplineRef = Track;
 				InverseSpline = true;
 			}
@@ -176,7 +135,6 @@ void ATrainPlayer::SwitchToNewTrack(AActor *Track, bool IsBackwards)
 		else
 		{
 			FVector LastPoint = SplineComponent->GetLocationAtSplinePoint(SplineComponent->GetNumberOfSplinePoints(), ESplineCoordinateSpace::World);
-
 			double DistanceToPoint = FVector::Distance(LastPoint, GetActorLocation());
 
 			if (DistanceToPoint < 300 && GearIndex > 0)

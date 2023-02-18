@@ -29,30 +29,23 @@ protected:
 	void SwitchLeft();
 
 	// Functions
-	AActor *FindSplineReference();
 	void MoveObjectAlongSpline(float DeltaTime);
 	void AdjustSpeedToGear();
+	UFUNCTION(BlueprintCallable)
+	void SwitchToNewTrack(AActor *Track, bool IsBackwards);
 
 	// Getters
 	UFUNCTION(BlueprintCallable)
 	int GetGearIndex();
 	UFUNCTION(BlueprintCallable)
 	int GetDirection();
-	UFUNCTION(BlueprintCallable)
-	void SwitchToNewTrack(AActor *Track, bool IsBackwards);
 
 	UPROPERTY(EditAnywhere)
-	float OverlapRadius;
+	TArray<float> SPEEDS;
 	UPROPERTY(EditAnywhere)
-	float Speed;
-	UPROPERTY(EditAnywhere)
-	TArray<float> Speeds;
-	UPROPERTY(EditAnywhere)
-	float AccelerationRate;
-	UPROPERTY(EditAnywhere)
-	FVector OverlapOffset;
-
-	AActor *SplineRef;
+	float ACCELERATION_RATE;
+	UPROPERTY(BlueprintReadWrite)
+	AActor *FIRST_TRACK;
 
 	/// 0 = Atrás
 	/// 1 = Reposo
@@ -60,9 +53,11 @@ protected:
 	/// 3 = Velocidad media
 	/// 4 = Velocidad alta
 	int GearIndex = 1;
+	AActor *SplineRef;
 	float Distance = 0;
 	float TargetSpeed = 0;
 	bool InverseSpline = false;
+	float Speed;
 	/// 0 = Izquierda
 	/// 1 = Derecha
 	int Direction = 0;
