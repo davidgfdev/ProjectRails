@@ -34,33 +34,32 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SwitchToNewTrack(AActor *Track, bool IsBackwards);
 
-	// Getters
-	UFUNCTION(BlueprintCallable)
-	int GetGearIndex();
-	UFUNCTION(BlueprintCallable)
-	int GetDirection();
-
 	UPROPERTY(EditAnywhere)
 	TArray<float> SPEEDS;
 	UPROPERTY(EditAnywhere)
 	float ACCELERATION_RATE;
 	UPROPERTY(BlueprintReadWrite)
 	AActor *FIRST_TRACK;
+	UPROPERTY(EditAnywhere)
+	double DETECTION_DISTANCE = 300;
 
+	float Distance = 0;
+	AActor *SplineRef;
+	float TargetSpeed = 0;
+	bool InverseSpline = false;
+	float Speed;
+
+	/// 0 = Izquierda
+	/// 1 = Derecha
+	UPROPERTY(BlueprintReadOnly)
+	int Direction = 0;
 	/// 0 = Atrás
 	/// 1 = Reposo
 	/// 2 = Velocidad lenta
 	/// 3 = Velocidad media
 	/// 4 = Velocidad alta
+	UPROPERTY(BlueprintReadOnly)
 	int GearIndex = 1;
-	AActor *SplineRef;
-	float Distance = 0;
-	float TargetSpeed = 0;
-	bool InverseSpline = false;
-	float Speed;
-	/// 0 = Izquierda
-	/// 1 = Derecha
-	int Direction = 0;
 
 public:
 	// Called every frame

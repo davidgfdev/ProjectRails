@@ -16,7 +16,6 @@ ATrainPlayer::ATrainPlayer()
 void ATrainPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	SplineRef = FIRST_TRACK;
 }
 
 // Called every frame
@@ -35,7 +34,7 @@ void ATrainPlayer::Tick(float DeltaTime)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Display, TEXT("SPLINEREF IS NULL"));
+		SplineRef = FIRST_TRACK;
 	}
 }
 
@@ -112,46 +111,32 @@ void ATrainPlayer::MoveObjectAlongSpline(float DeltaTime)
 
 void ATrainPlayer::SwitchToNewTrack(AActor *Track, bool IsBackwards)
 {
-	if (SplineRef != nullptr)
+	if (SplineRef == nullptr || (SplineRef != nullptr && Track == SplineRef))
+		return;
+
+	USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
+	double DistanceToPoint;
+
+	if (IsBackwards)
 	{
-		if (Track == SplineRef)
+		FVector FirstPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::World);
+		DistanceToPoint = FVector::Distance(FirstPoint, GetActorLocation());
+
+		if (DistanceToPoint < DETECTION_DISTANCE && GearIndex == 0)
 		{
-			return;
-		}
-
-		USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
-
-		if (IsBackwards)
-		{
-			FVector FirstPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::World);
-			double DistanceToPoint = FVector::Distance(FirstPoint, GetActorLocation());
-
-			if (DistanceToPoint < 300 && GearIndex == 0)
-			{
-				SplineRef = Track;
-				InverseSpline = true;
-			}
-		}
-		else
-		{
-			FVector LastPoint = SplineComponent->GetLocationAtSplinePoint(SplineComponent->GetNumberOfSplinePoints(), ESplineCoordinateSpace::World);
-			double DistanceToPoint = FVector::Distance(LastPoint, GetActorLocation());
-
-			if (DistanceToPoint < 300 && GearIndex > 0)
-			{
-				SplineRef = Track;
-				Distance = 0;
-			}
+			SplineRef = Track;
+			InverseSpline = true;
 		}
 	}
-}
+	else
+	{
+		FVector LastPoint = SplineComponent->GetLocationAtSplinePoint(SplineComponent->GetNumberOfSplinePoints(), ESplineCoordinateSpace::World);
+		DistanceToPoint = FVector::Distance(LastPoint, GetActorLocation());
 
-int ATrainPlayer::GetGearIndex()
-{
-	return GearIndex;
-}
-
-int ATrainPlayer::GetDirection()
-{
-	return Direction;
+		if (DistanceToPoint < DETECTION_DISTANCE && GearIndex > 0)
+		{
+			SplineRef = Track;
+			Distance = 0;
+		}
+	}
 }
