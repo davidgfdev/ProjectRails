@@ -16,16 +16,6 @@ ATrainPlayer::ATrainPlayer()
 void ATrainPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	AActor *Track = FindSplineReference();
-	if (Track != nullptr)
-	{
-		SplineRef = Track;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Display, TEXT("COULDN'T FIND A VALID SPLINE"));
-	}
 }
 
 // Called every frame
@@ -33,25 +23,18 @@ void ATrainPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AActor *NewTrack = CheckForTracks();
-	if (NewTrack != nullptr)
-	{
-		SplineRef = NewTrack;
-		Distance = 0;
-	}
-
 	if (SplineRef != nullptr)
 	{
 		MoveObjectAlongSpline(DeltaTime);
 
 		if (Speed != TargetSpeed)
 		{
-			Speed = FMath::Lerp(Speed, TargetSpeed, DeltaTime * FMath::Pow(AccelerationRate, 2));
+			Speed = FMath::Lerp(Speed, TargetSpeed, DeltaTime * FMath::Pow(ACCELERATION_RATE, 2));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Display, TEXT("SPLINEREF IS NULL"));
+		SplineRef = FIRST_TRACK;
 	}
 }
 
@@ -68,7 +51,7 @@ void ATrainPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputCompone
 
 void ATrainPlayer::AcceleratePressed()
 {
-	if (Speeds.Num() == 4)
+	if (SPEEDS.Num() == 4)
 	{
 		UE_LOG(LogTemp, Display, TEXT("SPEEDS ARE NOT SET!"));
 		return;
@@ -79,12 +62,12 @@ void ATrainPlayer::AcceleratePressed()
 		GearIndex++;
 	}
 
-	TargetSpeed = Speeds[GearIndex];
+	TargetSpeed = SPEEDS[GearIndex];
 }
 
 void ATrainPlayer::SlowPressed()
 {
-	if (Speeds.Num() == 4)
+	if (SPEEDS.Num() == 4)
 	{
 		UE_LOG(LogTemp, Display, TEXT("SPEEDS ARE NOT SET!"));
 		return;
@@ -95,7 +78,7 @@ void ATrainPlayer::SlowPressed()
 		GearIndex--;
 	}
 
-	TargetSpeed = Speeds[GearIndex];
+	TargetSpeed = SPEEDS[GearIndex];
 }
 
 void ATrainPlayer::SwitchRight()
@@ -113,12 +96,6 @@ void ATrainPlayer::MoveObjectAlongSpline(float DeltaTime)
 	USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
 	int SplineLength = SplineComponent->GetNumberOfSplinePoints();
 
-	if (InverseSpline)
-	{
-		Distance = SplineComponent->GetDistanceAlongSplineAtSplinePoint(SplineLength - 1);
-		InverseSpline = false;
-	}
-
 	Distance = (DeltaTime * Speed) + Distance;
 
 	FTransform TransformAtSpline = SplineComponent->GetTransformAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
@@ -126,42 +103,39 @@ void ATrainPlayer::MoveObjectAlongSpline(float DeltaTime)
 	SetActorRelativeTransform(NewTransform);
 }
 
-AActor *ATrainPlayer::FindSplineReference()
+void ATrainPlayer::SwitchToNewTrack(AActor *Track, bool IsBackwards)
 {
-	TArray<AActor *> Tracks;
+	if (SplineRef == nullptr || (SplineRef != nullptr && Track == SplineRef))
+		return;
 
-	TArray<TEnumAsByte<EObjectTypeQuery>> TraceObjectTypes;
-	TraceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
+	USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
 
-	TArray<AActor *> IgnoreActors;
-	IgnoreActors.Init(this, 1);
-
-	if (SplineRef != nullptr)
-		IgnoreActors.Add(SplineRef);
-
-	UKismetSystemLibrary::SphereOverlapActors(
-		GetWorld(),
-		GetActorLocation() + (OverlapOffset * GetActorForwardVector()),
-		OverlapRadius,
-		TraceObjectTypes,
-		ATrack::StaticClass(),
-		IgnoreActors, Tracks);
-
-	if (Tracks.Num() > 0)
+	if ((IsBackwards && GearIndex == 0) || (!IsBackwards && GearIndex > 0))
 	{
-		UE_LOG(LogTemp, Display, TEXT("Track Found: %s"), *Tracks[0]->GetActorNameOrLabel());
-		return Tracks[0];
+		SplineRef = Track;
+		USplineComponent *NewSplineComponent = Cast<USplineComponent>(Track->GetComponentByClass(USplineComponent::StaticClass()));
+		int ClosestPointIndex = GetClosestSplinePoint(NewSplineComponent);
+		Distance = SplineComponent->GetDistanceAlongSplineAtSplinePoint(ClosestPointIndex);
+	}
+}
+
+int ATrainPlayer::GetClosestSplinePoint(USplineComponent *SplineComponent)
+{
+	int NumOfPoints = SplineComponent->GetNumberOfSplinePoints();
+	double MinimalDistance = 999999;
+	int MinimalPointIndex = 0;
+
+	for (int i = 0; i <= NumOfPoints; i++)
+	{
+		FVector PointLocation = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World);
+
+		double DistanceToThisPoint = FVector::Dist(GetActorLocation(), PointLocation);
+		if (DistanceToThisPoint < MinimalDistance)
+		{
+			MinimalDistance = DistanceToThisPoint;
+			MinimalPointIndex = i;
+		}
 	}
 
-	return nullptr;
-}
-
-int ATrainPlayer::GetGearIndex()
-{
-	return GearIndex;
-}
-
-int ATrainPlayer::GetDirection()
-{
-	return Direction;
+	return MinimalPointIndex;
 }

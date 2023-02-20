@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "Components/TimelineComponent.h"
 #include "Curves/CurveFloat.h"
+#include "Components/SplineComponent.h"
 #include "Track.h"
 #include "TrainPlayer.generated.h"
 
@@ -28,42 +29,39 @@ protected:
 	void SwitchRight();
 	void SwitchLeft();
 
-	//Functions
-	AActor* FindSplineReference();
+	// Functions
 	void MoveObjectAlongSpline(float DeltaTime);
 	void AdjustSpeedToGear();
-
-	//Getters
 	UFUNCTION(BlueprintCallable)
-	int GetGearIndex();
-	UFUNCTION(BlueprintCallable)
-	int GetDirection();
+	void SwitchToNewTrack(AActor *Track, bool IsBackwards);
+	int GetClosestSplinePoint(USplineComponent *SplineComponent);
 
 	UPROPERTY(EditAnywhere)
-	float OverlapRadius;
+	TArray<float> SPEEDS;
 	UPROPERTY(EditAnywhere)
-	float Speed;
+	float ACCELERATION_RATE;
+	UPROPERTY(BlueprintReadWrite)
+	AActor *FIRST_TRACK;
 	UPROPERTY(EditAnywhere)
-	TArray<float> Speeds;
-	UPROPERTY(EditAnywhere)
-	float AccelerationRate;
-	UPROPERTY(EditAnywhere)
-	FVector OverlapOffset;
+	double DETECTION_DISTANCE = 300;
 
+	float Distance = 0;
 	AActor *SplineRef;
+	float TargetSpeed = 0;
+	bool InverseSpline = false;
+	float Speed;
 
+	/// 0 = Izquierda
+	/// 1 = Derecha
+	UPROPERTY(BlueprintReadOnly)
+	int Direction = 0;
 	/// 0 = Atrás
 	/// 1 = Reposo
 	/// 2 = Velocidad lenta
 	/// 3 = Velocidad media
 	/// 4 = Velocidad alta
+	UPROPERTY(BlueprintReadOnly)
 	int GearIndex = 1;
-	float Distance = 0;
-	float TargetSpeed = 0;
-	bool InverseSpline = false;
-	/// 0 = Izquierda
-	/// 1 = Derecha
-	int Direction = 0; 
 
 public:
 	// Called every frame
