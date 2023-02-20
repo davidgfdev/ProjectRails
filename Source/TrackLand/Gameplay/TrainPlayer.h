@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "Components/TimelineComponent.h"
 #include "Curves/CurveFloat.h"
+#include "Components/SplineComponent.h"
 #include "Track.h"
 #include "TrainPlayer.generated.h"
 
@@ -33,6 +34,7 @@ protected:
 	void AdjustSpeedToGear();
 	UFUNCTION(BlueprintCallable)
 	void SwitchToNewTrack(AActor *Track, bool IsBackwards);
+	int GetClosestSplinePoint(USplineComponent *SplineComponent);
 
 	UPROPERTY(EditAnywhere)
 	TArray<float> SPEEDS;

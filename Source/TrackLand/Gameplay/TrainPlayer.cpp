@@ -96,12 +96,6 @@ void ATrainPlayer::MoveObjectAlongSpline(float DeltaTime)
 	USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
 	int SplineLength = SplineComponent->GetNumberOfSplinePoints();
 
-	if (InverseSpline)
-	{
-		Distance = SplineComponent->GetDistanceAlongSplineAtSplinePoint(SplineLength - 1);
-		InverseSpline = false;
-	}
-
 	Distance = (DeltaTime * Speed) + Distance;
 
 	FTransform TransformAtSpline = SplineComponent->GetTransformAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
@@ -115,28 +109,33 @@ void ATrainPlayer::SwitchToNewTrack(AActor *Track, bool IsBackwards)
 		return;
 
 	USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
-	double DistanceToPoint;
 
-	if (IsBackwards)
+	if ((IsBackwards && GearIndex == 0) || (!IsBackwards && GearIndex > 0))
 	{
-		FVector FirstPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::World);
-		DistanceToPoint = FVector::Distance(FirstPoint, GetActorLocation());
+		SplineRef = Track;
+		USplineComponent *NewSplineComponent = Cast<USplineComponent>(Track->GetComponentByClass(USplineComponent::StaticClass()));
+		int ClosestPointIndex = GetClosestSplinePoint(NewSplineComponent);
+		Distance = SplineComponent->GetDistanceAlongSplineAtSplinePoint(ClosestPointIndex);
+	}
+}
 
-		if (DistanceToPoint < DETECTION_DISTANCE && GearIndex == 0)
+int ATrainPlayer::GetClosestSplinePoint(USplineComponent *SplineComponent)
+{
+	int NumOfPoints = SplineComponent->GetNumberOfSplinePoints();
+	double MinimalDistance = 999999;
+	int MinimalPointIndex = 0;
+
+	for (int i = 0; i <= NumOfPoints; i++)
+	{
+		FVector PointLocation = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World);
+
+		double DistanceToThisPoint = FVector::Dist(GetActorLocation(), PointLocation);
+		if (DistanceToThisPoint < MinimalDistance)
 		{
-			SplineRef = Track;
-			InverseSpline = true;
+			MinimalDistance = DistanceToThisPoint;
+			MinimalPointIndex = i;
 		}
 	}
-	else
-	{
-		FVector LastPoint = SplineComponent->GetLocationAtSplinePoint(SplineComponent->GetNumberOfSplinePoints(), ESplineCoordinateSpace::World);
-		DistanceToPoint = FVector::Distance(LastPoint, GetActorLocation());
 
-		if (DistanceToPoint < DETECTION_DISTANCE && GearIndex > 0)
-		{
-			SplineRef = Track;
-			Distance = 0;
-		}
-	}
+	return MinimalPointIndex;
 }
