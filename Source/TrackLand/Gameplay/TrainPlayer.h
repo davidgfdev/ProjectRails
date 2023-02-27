@@ -35,13 +35,12 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SwitchToNewTrack(AActor *Track, bool IsBackwards);
 	int GetClosestSplinePoint(USplineComponent *SplineComponent);
+	AActor* GetTrackInRange(float Radius);
 
 	UPROPERTY(EditAnywhere)
 	TArray<float> SPEEDS;
 	UPROPERTY(EditAnywhere)
 	float ACCELERATION_RATE;
-	UPROPERTY(BlueprintReadWrite)
-	AActor *FIRST_TRACK;
 	UPROPERTY(EditAnywhere)
 	double DETECTION_DISTANCE = 300;
 
@@ -50,6 +49,7 @@ protected:
 	float TargetSpeed = 0;
 	bool InverseSpline = false;
 	float Speed;
+	bool IsReversed = false;
 
 	/// 0 = Izquierda
 	/// 1 = Derecha
