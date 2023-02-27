@@ -18,7 +18,10 @@ void ATrack::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateCollisionInPoints();
+	USplineComponent *SplineRef = Cast<USplineComponent>(GetComponentByClass(USplineComponent::StaticClass()));
+
+	CreateCollisionInPoint(0, SplineRef);
+	CreateCollisionInPoint(SplineRef->GetNumberOfSplinePoints() - 1, SplineRef);
 }
 
 // Called every frame
@@ -62,22 +65,12 @@ void ATrack::DeformTrackMesh()
 	}
 }
 
-void ATrack::CreateCollisionInPoints()
+void ATrack::CreateCollisionInPoint(int PositionIndex, USplineComponent *SplineRef)
 {
-	USplineComponent *SplineRef = Cast<USplineComponent>(GetComponentByClass(USplineComponent::StaticClass()));
 
-	if (SplineRef != nullptr)
-	{
-		int SplinePoints = SplineRef->GetNumberOfSplinePoints();
-
-		for (int i = 0; i <= SplinePoints; i++)
-		{
-			FVector NewColliderPosition = SplineRef->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
-			FTransform NewColliderTransform = FTransform(FRotator::ZeroRotator, NewColliderPosition, ColliderSize);
-			UBoxComponent *BoxComponent = Cast<UBoxComponent>(AddComponentByClass(UBoxComponent::StaticClass(), false, NewColliderTransform, false));
-
-			BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-			BoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
-		}
-	}
+	FVector NewColliderPosition = SplineRef->GetLocationAtSplinePoint(PositionIndex, ESplineCoordinateSpace::Local);
+	FTransform NewColliderTransform = FTransform(FRotator::ZeroRotator, NewColliderPosition, ColliderSize);
+	UBoxComponent *BoxComponent = Cast<UBoxComponent>(AddComponentByClass(UBoxComponent::StaticClass(), false, NewColliderTransform, false));
+	BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	BoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 }
