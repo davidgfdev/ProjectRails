@@ -122,19 +122,11 @@ void ATrainPlayer::SwitchToNewTrack(AActor *Track, bool IsBackwards)
 
 	SplineRef = Track;
 
-	if (FacingDirection == -1 && ClosestPointIndex == 1) {
-		UE_LOG(LogTemp, Display, TEXT("CASO TURBIO"));
-		return;
-	}
-
 	FacingDirection = (ClosestPointIndex == 0)
 						  ? FacingDirection = (GearIndex > 0) ? 1 : -1
 						  : FacingDirection = (GearIndex > 0) ? -1 : 1;
 
 	Distance = ClosestPointIndex == 0 ? 0 : (NewTrackSplineComponent->GetSplineLength());
-
-	UE_LOG(LogTemp, Display, TEXT("TRACKNAME: %s"), *Track->GetActorNameOrLabel());
-	UE_LOG(LogTemp, Display, TEXT("FacingDirection: %d"), FacingDirection);
 }
 
 int ATrainPlayer::GetClosestSplinePoint(USplineComponent *SplineComponent)
