@@ -35,6 +35,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SwitchToNewTrack(AActor *Track, bool IsBackwards);
 	int GetClosestSplinePoint(USplineComponent *SplineComponent);
+	AActor* FindSplineReference(float Radius);
 
 	UPROPERTY(EditAnywhere)
 	TArray<float> SPEEDS;
@@ -62,6 +63,7 @@ protected:
 	/// 4 = Velocidad alta
 	UPROPERTY(BlueprintReadOnly)
 	int GearIndex = 1;
+	int FacingDirection = 0;
 
 public:
 	// Called every frame

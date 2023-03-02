@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SplineComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Track.h"
 
 // Sets default values
@@ -16,6 +17,8 @@ ATrainPlayer::ATrainPlayer()
 void ATrainPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SwitchToNewTrack(FindSplineReference(300), false);
 }
 
 // Called every frame
@@ -96,27 +99,42 @@ void ATrainPlayer::MoveObjectAlongSpline(float DeltaTime)
 	USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
 	int SplineLength = SplineComponent->GetNumberOfSplinePoints();
 
-	Distance = (DeltaTime * Speed) + Distance;
+	Distance = (DeltaTime * Speed * FacingDirection) + Distance;
 
 	FTransform TransformAtSpline = SplineComponent->GetTransformAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
 	FTransform NewTransform = FTransform(TransformAtSpline.Rotator(), TransformAtSpline.GetLocation(), FVector::One());
+
+	if (FacingDirection == -1){
+		FVector SplineBackwardVector = - NewTransform.GetRotation().GetForwardVector();
+		NewTransform = FTransform(SplineBackwardVector.Rotation(), TransformAtSpline.GetLocation(), FVector::One());
+	}
+
 	SetActorRelativeTransform(NewTransform);
 }
 
 void ATrainPlayer::SwitchToNewTrack(AActor *Track, bool IsBackwards)
 {
-	if (SplineRef == nullptr || (SplineRef != nullptr && Track == SplineRef))
+	if (Track == SplineRef)
 		return;
+	USplineComponent *NewTrackSplineComponent = Cast<USplineComponent>(Track->GetComponentByClass(USplineComponent::StaticClass()));
 
-	USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
+	int ClosestPointIndex = GetClosestSplinePoint(NewTrackSplineComponent);
 
-	if ((IsBackwards && GearIndex == 0) || (!IsBackwards && GearIndex > 0))
-	{
-		SplineRef = Track;
-		USplineComponent *NewSplineComponent = Cast<USplineComponent>(Track->GetComponentByClass(USplineComponent::StaticClass()));
-		int ClosestPointIndex = GetClosestSplinePoint(NewSplineComponent);
-		Distance = SplineComponent->GetDistanceAlongSplineAtSplinePoint(ClosestPointIndex);
+	SplineRef = Track;
+
+	if (FacingDirection == -1 && ClosestPointIndex == 1) {
+		UE_LOG(LogTemp, Display, TEXT("CASO TURBIO"));
+		return;
 	}
+
+	FacingDirection = (ClosestPointIndex == 0)
+						  ? FacingDirection = (GearIndex > 0) ? 1 : -1
+						  : FacingDirection = (GearIndex > 0) ? -1 : 1;
+
+	Distance = ClosestPointIndex == 0 ? 0 : (NewTrackSplineComponent->GetSplineLength());
+
+	UE_LOG(LogTemp, Display, TEXT("TRACKNAME: %s"), *Track->GetActorNameOrLabel());
+	UE_LOG(LogTemp, Display, TEXT("FacingDirection: %d"), FacingDirection);
 }
 
 int ATrainPlayer::GetClosestSplinePoint(USplineComponent *SplineComponent)
@@ -138,4 +156,30 @@ int ATrainPlayer::GetClosestSplinePoint(USplineComponent *SplineComponent)
 	}
 
 	return MinimalPointIndex;
+}
+
+AActor *ATrainPlayer::FindSplineReference(float Radius)
+{
+	TArray<AActor *> Tracks;
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> TraceObjectTypes;
+	TraceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
+
+	TArray<AActor *> IgnoreActors;
+	IgnoreActors.Init(this, 1);
+
+	if (SplineRef != nullptr)
+		IgnoreActors.Add(SplineRef);
+
+	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), Radius, TraceObjectTypes, ATrack::StaticClass(), IgnoreActors, Tracks);
+	DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 12, FColor::Red, false, 5);
+
+	if (Tracks.Num() > 0)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Track found"));
+		return Tracks[0];
+	}
+
+	UE_LOG(LogTemp, Display, TEXT("Track NOT found"));
+	return nullptr;
 }
