@@ -35,10 +35,6 @@ void ATrainPlayer::Tick(float DeltaTime)
 			Speed = FMath::Lerp(Speed, TargetSpeed, DeltaTime * FMath::Pow(ACCELERATION_RATE, 2));
 		}
 	}
-	else
-	{
-		SplineRef = FIRST_TRACK;
-	}
 }
 
 // Called to bind functionality to input
@@ -101,7 +97,8 @@ void ATrainPlayer::MoveObjectAlongSpline(float DeltaTime)
 
 	Distance = (DeltaTime * Speed * FacingDirection) + Distance;
 
-	FTransform TransformAtSpline = SplineComponent->GetTransformAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
+	FTransform TransformAtSpline = SplineComponent->GetTransformAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);;
+
 	FTransform NewTransform = FTransform(TransformAtSpline.Rotator(), TransformAtSpline.GetLocation(), FVector::One());
 
 	if (FacingDirection == -1){
