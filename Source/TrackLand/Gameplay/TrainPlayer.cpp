@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SplineComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Track.h"
 
 // Sets default values
@@ -17,11 +18,7 @@ void ATrainPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AActor *FirstTrack = GetTrackInRange(500);
-	if (FirstTrack != nullptr)
-	{
-		SplineRef = FirstTrack;
-	}
+	SwitchToNewTrack(FindSplineReference(300), false);
 }
 
 // Called every frame
@@ -96,45 +93,37 @@ void ATrainPlayer::SwitchLeft()
 void ATrainPlayer::MoveObjectAlongSpline(float DeltaTime)
 {
 	USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
+	int SplineLength = SplineComponent->GetNumberOfSplinePoints();
 
-	Distance = (DeltaTime * Speed) + Distance;
+	Distance = (DeltaTime * Speed * FacingDirection) + Distance;
 
-	FTransform TransformAtSpline;
-
-	if (IsReversed)
-	{
-		float SplineTotalDistance = SplineComponent->GetSplineLength();
-		UE_LOG(LogTemp, Display, TEXT("SplineLength: %f"), SplineTotalDistance);
-		TransformAtSpline = SplineComponent->GetTransformAtDistanceAlongSpline((SplineTotalDistance - Distance), ESplineCoordinateSpace::World);
-	}
-	else
-	{
-		TransformAtSpline = SplineComponent->GetTransformAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
-	}
+	FTransform TransformAtSpline = SplineComponent->GetTransformAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);;
 
 	FTransform NewTransform = FTransform(TransformAtSpline.Rotator(), TransformAtSpline.GetLocation(), FVector::One());
+
+	if (FacingDirection == -1){
+		FVector SplineBackwardVector = - NewTransform.GetRotation().GetForwardVector();
+		NewTransform = FTransform(SplineBackwardVector.Rotation(), TransformAtSpline.GetLocation(), FVector::One());
+	}
+
 	SetActorRelativeTransform(NewTransform);
 }
 
 void ATrainPlayer::SwitchToNewTrack(AActor *Track, bool IsBackwards)
 {
-	if (SplineRef == nullptr || (SplineRef != nullptr && Track == SplineRef))
+	if (Track == SplineRef)
 		return;
+	USplineComponent *NewTrackSplineComponent = Cast<USplineComponent>(Track->GetComponentByClass(USplineComponent::StaticClass()));
 
-	USplineComponent *SplineComponent = Cast<USplineComponent>(SplineRef->GetComponentByClass(USplineComponent::StaticClass()));
+	int ClosestPointIndex = GetClosestSplinePoint(NewTrackSplineComponent);
 
-	if ((IsBackwards && GearIndex == 0) || (!IsBackwards && GearIndex > 0))
-	{
+	SplineRef = Track;
 
-		USplineComponent *NewSplineComponent = Cast<USplineComponent>(Track->GetComponentByClass(USplineComponent::StaticClass()));
-		int ClosestPointIndex = GetClosestSplinePoint(NewSplineComponent);
-		IsReversed = ClosestPointIndex == NewSplineComponent->GetNumberOfSplinePoints() - 1;
+	FacingDirection = (ClosestPointIndex == 0)
+						  ? FacingDirection = (GearIndex > 0) ? 1 : -1
+						  : FacingDirection = (GearIndex > 0) ? -1 : 1;
 
-		SplineRef = Track;
-		Distance = SplineComponent->GetDistanceAlongSplineAtSplinePoint(ClosestPointIndex);
-
-		UE_LOG(LogTemp, Display, TEXT("Distance: %f, ClosestPointIndex: %d"), Distance, ClosestPointIndex);
-	}
+	Distance = ClosestPointIndex == 0 ? 0 : (NewTrackSplineComponent->GetSplineLength());
 }
 
 int ATrainPlayer::GetClosestSplinePoint(USplineComponent *SplineComponent)
@@ -158,7 +147,7 @@ int ATrainPlayer::GetClosestSplinePoint(USplineComponent *SplineComponent)
 	return MinimalPointIndex;
 }
 
-AActor *ATrainPlayer::GetTrackInRange(float Radius = 300)
+AActor *ATrainPlayer::FindSplineReference(float Radius)
 {
 	TArray<AActor *> Tracks;
 
@@ -172,9 +161,14 @@ AActor *ATrainPlayer::GetTrackInRange(float Radius = 300)
 		IgnoreActors.Add(SplineRef);
 
 	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), Radius, TraceObjectTypes, ATrack::StaticClass(), IgnoreActors, Tracks);
-	DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 12, FColor::Red, false, 10);
+	DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 12, FColor::Red, false, 5);
 
-	return Tracks.Num() > 0
-			   ? Tracks[0]
-			   : nullptr;
+	if (Tracks.Num() > 0)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Track found"));
+		return Tracks[0];
+	}
+
+	UE_LOG(LogTemp, Display, TEXT("Track NOT found"));
+	return nullptr;
 }

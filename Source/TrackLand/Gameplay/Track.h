@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/InstancedStaticMeshComponent.h"
+#include "Components/SplineComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Track.generated.h"
 
@@ -32,8 +33,8 @@ public:
 
 private:
 	void DeformTrackMesh();
-	void CreateCollisionInPoints();
+	void CreateCollisionInPoint(int PositionIndex, USplineComponent *SplineRef);
 
 	UPROPERTY(EditAnywhere)
-	FVector ColliderSize = FVector(1,1,1);
+	FVector ColliderSize = FVector(1, 1, 1);
 };
