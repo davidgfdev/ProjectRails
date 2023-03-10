@@ -32,7 +32,7 @@ void ATrainPlayer::Tick(float DeltaTime)
 
 		if (Speed != TargetSpeed)
 		{
-			Speed = FMath::Lerp(Speed, TargetSpeed, DeltaTime * FMath::Pow(ACCELERATION_RATE, 2));
+			Speed = IsStucked ? 0 : FMath::Lerp(Speed, TargetSpeed, DeltaTime * FMath::Pow(ACCELERATION_RATE, 2));
 		}
 	}
 }
@@ -77,7 +77,18 @@ void ATrainPlayer::SlowPressed()
 		GearIndex--;
 	}
 
-	TargetSpeed = SPEEDS[GearIndex];
+	if (Speed > 750 && (GearIndex == 1 || GearIndex == 0))
+	{
+		TargetSpeed = 0;
+		Speed = 0;
+		IsStucked = true;
+		FTimerHandle RegainControlHandle;
+		GetWorldTimerManager().SetTimer(RegainControlHandle, this, &ATrainPlayer::RecoverTrainControl, STUCK_TIME, false);
+	}
+	else
+	{
+		TargetSpeed = SPEEDS[GearIndex];
+	}
 }
 
 void ATrainPlayer::SwitchRight()
@@ -97,12 +108,13 @@ void ATrainPlayer::MoveObjectAlongSpline(float DeltaTime)
 
 	Distance = (DeltaTime * Speed * FacingDirection) + Distance;
 
-	FTransform TransformAtSpline = SplineComponent->GetTransformAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);;
+	FTransform TransformAtSpline = SplineComponent->GetTransformAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
 
 	FTransform NewTransform = FTransform(TransformAtSpline.Rotator(), TransformAtSpline.GetLocation(), FVector::One());
 
-	if (FacingDirection == -1){
-		FVector SplineBackwardVector = - NewTransform.GetRotation().GetForwardVector();
+	if (FacingDirection == -1)
+	{
+		FVector SplineBackwardVector = -NewTransform.GetRotation().GetForwardVector();
 		NewTransform = FTransform(SplineBackwardVector.Rotation(), TransformAtSpline.GetLocation(), FVector::One());
 	}
 
@@ -171,4 +183,10 @@ AActor *ATrainPlayer::FindSplineReference(float Radius)
 
 	UE_LOG(LogTemp, Display, TEXT("Track NOT found"));
 	return nullptr;
+}
+
+void ATrainPlayer::RecoverTrainControl()
+{
+	IsStucked = false;
+	UE_LOG(LogTemp, Display, TEXT("Control recovered"));
 }

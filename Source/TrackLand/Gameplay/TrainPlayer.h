@@ -36,6 +36,7 @@ protected:
 	void SwitchToNewTrack(AActor *Track, bool IsBackwards);
 	int GetClosestSplinePoint(USplineComponent *SplineComponent);
 	AActor* FindSplineReference(float Radius);
+	void RecoverTrainControl();
 
 	UPROPERTY(EditAnywhere)
 	TArray<float> SPEEDS;
@@ -43,6 +44,8 @@ protected:
 	float ACCELERATION_RATE;
 	UPROPERTY(EditAnywhere)
 	double DETECTION_DISTANCE = 300;
+	UPROPERTY(EditAnywhere)
+	double STUCK_TIME = 1.5;
 
 	float Distance = 0;
 	AActor *SplineRef;
@@ -50,6 +53,7 @@ protected:
 	bool InverseSpline = false;
 	float Speed;
 	bool IsReversed = false;
+	bool IsStucked = false;
 
 	/// 0 = Izquierda
 	/// 1 = Derecha
