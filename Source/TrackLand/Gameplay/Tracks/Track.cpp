@@ -1,30 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Track.h"
+#include "..\Source\TrackLand\Gameplay\Tracks\Track.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SplineComponent.h"
 
-// Sets default values
 ATrack::ATrack()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
 void ATrack::BeginPlay()
 {
 	Super::BeginPlay();
-
-	USplineComponent *SplineRef = Cast<USplineComponent>(GetComponentByClass(USplineComponent::StaticClass()));
-
-	CreateCollisionInPoint(0, SplineRef);
-	CreateCollisionInPoint(SplineRef->GetNumberOfSplinePoints() - 1, SplineRef);
+	Spline = Cast<USplineComponent>(GetComponentByClass(USplineComponent::StaticClass()));
+	TurnOnMaintenance();
 }
 
-// Called every frame
 void ATrack::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -32,13 +25,12 @@ void ATrack::Tick(float DeltaTime)
 
 void ATrack::OnConstruction(const FTransform &Transform)
 {
-	DeformTrackMesh();
+	USplineComponent *SplineRef = Cast<USplineComponent>(GetComponentByClass(USplineComponent::StaticClass()));
+	DeformTrackMesh(SplineRef);
 }
 
-void ATrack::DeformTrackMesh()
+void ATrack::DeformTrackMesh(USplineComponent *SplineRef)
 {
-	USplineComponent *SplineRef = Cast<USplineComponent>(GetComponentByClass(USplineComponent::StaticClass()));
-
 	if (InstantiableMesh == nullptr || SplineRef == nullptr)
 	{
 		return;
@@ -67,10 +59,55 @@ void ATrack::DeformTrackMesh()
 
 void ATrack::CreateCollisionInPoint(int PositionIndex, USplineComponent *SplineRef)
 {
-
 	FVector NewColliderPosition = SplineRef->GetLocationAtSplinePoint(PositionIndex, ESplineCoordinateSpace::Local);
 	FTransform NewColliderTransform = FTransform(FRotator::ZeroRotator, NewColliderPosition, ColliderSize);
 	UBoxComponent *BoxComponent = Cast<UBoxComponent>(AddComponentByClass(UBoxComponent::StaticClass(), false, NewColliderTransform, false));
 	BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	BoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+}
+
+void ATrack::ToggleColliders(bool IsActive)
+{
+	TArray<UBoxComponent *> Components;
+	GetComponents<UBoxComponent>(Components);
+
+	for (UBoxComponent *BoxCollider : Components)
+	{
+		BoxCollider->SetGenerateOverlapEvents(IsActive);
+	}
+}
+
+int ATrack::GetClosestPoint(USplineComponent *SplineComponent, FVector Point)
+{
+	float MinimalDistance = 9999;
+	int MinimalPoint = 0;
+	for (int i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
+	{
+		FVector SplinePointLocation = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World);
+		float Distance = FVector::Distance(Point, SplinePointLocation);
+
+		if (Distance < MinimalDistance)
+		{
+			MinimalDistance = Distance;
+			MinimalPoint = i;
+		}
+	}
+
+	return MinimalPoint;
+}
+
+void ATrack::TurnOnMaintenance()
+{
+	if (IsAbleToMaintentance)
+	{
+		IsInMaintenance = FMath::RandRange(0, 100) > 90;
+
+		TArray<UActorComponent *> ActorsWithTag = GetComponentsByTag(UStaticMeshComponent::StaticClass(), FName("Indicator"));
+		if (ActorsWithTag.Num() != 0)
+		{
+			UStaticMeshComponent *Indicator = Cast<UStaticMeshComponent>(ActorsWithTag[0]);
+			if (Indicator != nullptr)
+				Indicator->SetVisibility(IsInMaintenance);
+		}
+	}
 }

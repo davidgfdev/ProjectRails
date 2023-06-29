@@ -15,11 +15,9 @@ class TRACKLAND_API ATrack : public AActor
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	ATrack();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	virtual void OnConstruction(const FTransform &Transform) override;
@@ -27,14 +25,28 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UStaticMesh *InstantiableMesh;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-private:
-	void DeformTrackMesh();
+	UFUNCTION(BlueprintCallable)
+	void DeformTrackMesh(USplineComponent *SplineRef);
 	void CreateCollisionInPoint(int PositionIndex, USplineComponent *SplineRef);
 
 	UPROPERTY(EditAnywhere)
 	FVector ColliderSize = FVector(1, 1, 1);
+
+	UPROPERTY(EditAnywhere)
+	bool IsAbleToMaintentance = false;
+
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable)
+	void ToggleColliders(bool IsActive);
+	int GetClosestPoint(USplineComponent *SplineComponent, FVector Point);
+
+	USplineComponent *Spline;
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FVector> Waypoints;
+	UPROPERTY(BlueprintReadOnly)
+	bool IsInMaintenance = false;
+
+	void TurnOnMaintenance();
 };

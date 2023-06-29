@@ -1,6 +1,6 @@
 [
 	{
-		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Track.cpp",
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Player\\TrainPawn.cpp",
 		"arguments": [
 			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
 			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
@@ -8,7 +8,7 @@
 		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
 	},
 	{
-		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Track.h",
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Player\\TrainPawn.h",
 		"arguments": [
 			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
 			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
@@ -16,7 +16,7 @@
 		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
 	},
 	{
-		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\TrainPlayer.cpp",
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Player\\Wagon.cpp",
 		"arguments": [
 			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
 			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
@@ -24,7 +24,87 @@
 		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
 	},
 	{
-		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\TrainPlayer.h",
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Player\\Wagon.h",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
+		],
+		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\SkillChecks\\SkillCheckZone.cpp",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
+		],
+		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\SkillChecks\\SkillCheckZone.h",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
+		],
+		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Stations\\Station.cpp",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
+		],
+		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Stations\\Station.h",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
+		],
+		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Tracks\\SwitchTrack.cpp",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
+		],
+		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Tracks\\SwitchTrack.h",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
+		],
+		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Tracks\\Track.cpp",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
+		],
+		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Gameplay\\Tracks\\Track.h",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
+		],
+		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Managers\\Manager.cpp",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
+		],
+		"directory": "C:\\Program Files\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Source\\TrackLand\\Managers\\Manager.h",
 		"arguments": [
 			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
 			"@C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\.vscode\\compileCommands_Default\\TrackLand.255.rsp"
