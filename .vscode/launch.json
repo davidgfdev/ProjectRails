@@ -4,7 +4,7 @@
 		{
 			"name": "Launch TrackLand (Debug)",
 			"request": "launch",
-			"program": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Binaries\\Win64\\TrackLand-Win64-DebugGame.exe",
+			"program": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Binaries\\Win64\\UnrealGame-Win64-Debug.exe",
 			"preLaunchTask": "TrackLand Win64 Debug Build",
 			"args": [
 			],
@@ -20,7 +20,7 @@
 		{
 			"name": "Launch TrackLand (DebugGame)",
 			"request": "launch",
-			"program": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Binaries\\Win64\\TrackLand-Win64-DebugGame.exe",
+			"program": "C:\\Users\\david\\OneDrive\\Documentos\\Proyectos\\ProjectRails\\ProjectRails\\Binaries\\Win64\\UnrealGame-Win64-DebugGame.exe",
 			"preLaunchTask": "TrackLand Win64 DebugGame Build",
 			"args": [
 			],
