@@ -18,6 +18,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	ATrainPawn *PlayerRef;
 
+	UPROPERTY(EditAnywhere)
+	float DISTANCE_THRESHOLD = 500;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTrainStopped();
 
@@ -25,8 +28,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	ATrack *ChildTrack;
-
 	bool IsAbleToStop = true;
 
 public:

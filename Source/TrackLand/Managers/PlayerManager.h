@@ -16,10 +16,9 @@ protected:
 private:
 	ATrainPawn *PlayerRef;
 	int WagonsObtained = 1;
-	int Money = 0;
+	int Money = 100;
 	int LicenseLevel = 1;
-	int TrainFuel = 100;
-	AStation *CurrentStation = nullptr;
+	int TrainFuel = 50;
 
 public:
 	virtual void Tick(float DeltaTime) override;
@@ -36,7 +35,8 @@ public:
 	int GetTrainFuel() { return TrainFuel; }
 
 	UFUNCTION(BlueprintCallable)
-	void SetCurrentStation(AStation *NewStation) { CurrentStation = NewStation; }
+	int GetMoney() { return Money; }
+
 	UFUNCTION(BlueprintCallable)
-	AStation *GetCurrentStation() { return CurrentStation; }
+	int GetWagonsObtained() { return WagonsObtained; }
 };
