@@ -16,3 +16,11 @@ void APlayerManager::SubstractMoney(int MoneyToSubstract)
 {
     Money -= MoneyToSubstract;
 }
+
+void APlayerManager::UpgradeWagons()
+{
+    if (WagonsObtained < 5)
+    {
+        WagonsObtained++;
+    }
+}

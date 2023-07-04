@@ -5,11 +5,12 @@
 #include "FuelStation.generated.h"
 
 UCLASS()
-class TRACKLAND_API AFuelStation : public AActor
+class TRACKLAND_API AFuelStation : public AStation
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintReadWrite)
 	float FuelPrice = 0.8;
 
 	UFUNCTION(BlueprintCallable)
