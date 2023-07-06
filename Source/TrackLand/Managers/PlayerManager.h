@@ -15,10 +15,10 @@ protected:
 
 private:
 	ATrainPawn *PlayerRef;
-	int WagonsObtained = 1;
-	int Money = 100;
-	int LicenseLevel = 1;
-	int TrainFuel = 50;
+	int WagonsObtained = 0;
+	int Money = 9999;
+	int LicenseLevel = 0;
+	int TrainFuel = 999;
 
 public:
 	virtual void Tick(float DeltaTime) override;
@@ -39,4 +39,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int GetWagonsObtained() { return WagonsObtained; }
+
+	UFUNCTION(BlueprintCallable)
+	int GetLicenseLevel() { return LicenseLevel; }
 };

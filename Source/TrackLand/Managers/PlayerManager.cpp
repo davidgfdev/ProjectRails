@@ -24,3 +24,11 @@ void APlayerManager::UpgradeWagons()
         WagonsObtained++;
     }
 }
+
+void APlayerManager::UpgradeLicenseLevel()
+{
+    if (LicenseLevel < 5)
+    {
+        LicenseLevel++;
+    }
+}
