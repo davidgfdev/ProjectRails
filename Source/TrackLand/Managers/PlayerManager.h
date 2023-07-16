@@ -33,13 +33,10 @@ public:
 	void SetTrainFuel(int Fuel) { TrainFuel = Fuel; }
 	UFUNCTION(BlueprintCallable)
 	int GetTrainFuel() { return TrainFuel; }
-
 	UFUNCTION(BlueprintCallable)
 	int GetMoney() { return Money; }
-
 	UFUNCTION(BlueprintCallable)
 	int GetWagonsObtained() { return WagonsObtained; }
-
 	UFUNCTION(BlueprintCallable)
 	int GetLicenseLevel() { return LicenseLevel; }
 };

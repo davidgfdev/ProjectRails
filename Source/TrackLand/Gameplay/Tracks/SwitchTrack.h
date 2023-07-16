@@ -17,9 +17,6 @@ enum EEntrances
 	RIGHT UMETA(DisplayName = "Right"),
 };
 
-/**
- *
- */
 UCLASS()
 class TRACKLAND_API ASwitchTrack : public ATrack
 {
@@ -32,25 +29,17 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
 	virtual void OnConstruction(const FTransform &Transform) override;
-
 	void DeformTrackMesh(USplineComponent *SplineRef);
 
-	UFUNCTION(BlueprintCallable)
-	void CalculateValidSpline(TEnumAsByte<EEntrances> Entrance, int PlayerDirection);
+	UFUNCTION(BlueprintCallable) void CalculateValidSpline(TEnumAsByte<EEntrances> Entrance, int PlayerDirection);
 
 public:
+UPROPERTY(BlueprintReadWrite) USplineComponent *ActiveSpline;
+	UPROPERTY(BlueprintReadWrite) TArray<FVector> WaypointsLinear;
+	UPROPERTY(BlueprintReadWrite) TArray<FVector> WaypointsLeft;
+	UPROPERTY(BlueprintReadWrite) TArray<FVector> WaypointsRight;
+
 	virtual void Tick(float DeltaTime) override;
-
 	void ToggleColliders(bool IsActive);
-
-	UPROPERTY(BlueprintReadWrite)
-	USplineComponent *ActiveSpline;
-	UPROPERTY(BlueprintReadWrite)
-	TArray<FVector> WaypointsLinear;
-	UPROPERTY(BlueprintReadWrite)
-	TArray<FVector> WaypointsLeft;
-	UPROPERTY(BlueprintReadWrite)
-	TArray<FVector> WaypointsRight;
 };

@@ -17,6 +17,11 @@ void APlayerManager::SubstractMoney(int MoneyToSubstract)
     Money -= MoneyToSubstract;
 }
 
+void APlayerManager::AddMoney(int MoneyToAdd)
+{
+    Money += MoneyToAdd;
+}
+
 void APlayerManager::UpgradeWagons()
 {
     if (WagonsObtained < 5)

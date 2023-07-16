@@ -15,14 +15,19 @@ class TRACKLAND_API AStation : public AActor
 public:
 	AStation();
 
-	UPROPERTY(BlueprintReadWrite)
-	ATrainPawn *PlayerRef;
-
-	UPROPERTY(EditAnywhere)
-	float DISTANCE_THRESHOLD = 500;
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTrainStopped();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int StationId = -1;
+	UPROPERTY(BlueprintReadWrite)
+	ATrainPawn *PlayerRef;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString StationName = "";
+	UPROPERTY(EditAnywhere)
+	float DISTANCE_THRESHOLD = 500;
 
 protected:
 	virtual void BeginPlay() override;
@@ -30,6 +35,6 @@ protected:
 private:
 	bool IsAbleToStop = true;
 
-public:
-	virtual void Tick(float DeltaTime) override;
+	void StopTrain();
+	void CheckMissionCompletion();
 };
