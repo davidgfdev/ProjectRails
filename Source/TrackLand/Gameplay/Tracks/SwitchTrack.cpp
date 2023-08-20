@@ -34,7 +34,7 @@ void ASwitchTrack::OnConstruction(const FTransform &Transform)
 
 void ASwitchTrack::CalculateValidSpline(TEnumAsByte<EEntrances> Entrance, int PlayerDirection)
 {
-    UE_LOG(LogTemp, Display, TEXT("Calculando spline valida"));
+    UE_LOG(LogTemp, Display, TEXT("Player Direction: %d"), PlayerDirection);
     UActorComponent *SplineRef = nullptr;
     FString Tag = "";
     switch (Entrance)
