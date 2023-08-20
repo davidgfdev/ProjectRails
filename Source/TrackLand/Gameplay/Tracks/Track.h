@@ -38,11 +38,13 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FVector> Waypoints;
 	UPROPERTY(BlueprintReadOnly)
-	bool IsInMaintenance = false;
+	bool IsBlocked = false;
+	UPROPERTY(EditAnywhere)
+	int LicenseLevel = 0;
 
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable)
 	void ToggleColliders(bool IsActive);
 	int GetClosestPoint(USplineComponent *SplineComponent, FVector Point);
-	void TurnOnMaintenance();
+	void LicenseBlock();
 };

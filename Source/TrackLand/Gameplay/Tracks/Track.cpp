@@ -5,6 +5,8 @@
 #include "Components/SplineMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SplineComponent.h"
+#include "..\Source\TrackLand\Managers\PlayerManager.h"
+#include "Kismet/GameplayStatics.h"
 
 ATrack::ATrack()
 {
@@ -15,7 +17,7 @@ void ATrack::BeginPlay()
 {
 	Super::BeginPlay();
 	Spline = Cast<USplineComponent>(GetComponentByClass(USplineComponent::StaticClass()));
-	TurnOnMaintenance();
+	LicenseBlock();
 }
 
 void ATrack::Tick(float DeltaTime)
@@ -53,7 +55,7 @@ void ATrack::DeformTrackMesh(USplineComponent *SplineRef)
 		SplineMesh->SetForwardAxis(ESplineMeshAxis::X);
 		SplineMesh->SetStartAndEnd(StartLocation, StartTangent, EndLocation, EndTangent, true);
 
-		SplineMesh->AttachToComponent(SplineRef, FAttachmentTransformRules::KeepRelativeTransform, TEXT("SplineMesh"));
+		SplineMesh->AttachToComponent(SplineRef, FAttachmentTransformRules::KeepWorldTransform, TEXT("SplineMesh"));
 	}
 }
 
@@ -96,18 +98,16 @@ int ATrack::GetClosestPoint(USplineComponent *SplineComponent, FVector Point)
 	return MinimalPoint;
 }
 
-void ATrack::TurnOnMaintenance()
+void ATrack::LicenseBlock()
 {
-	if (IsAbleToMaintentance)
-	{
-		IsInMaintenance = FMath::RandRange(0, 100) > 90;
+	APlayerManager *PlayerManager = Cast<APlayerManager>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerManager::StaticClass()));
+	IsBlocked = PlayerManager->GetLicenseLevel() < LicenseLevel;
 
-		TArray<UActorComponent *> ActorsWithTag = GetComponentsByTag(UStaticMeshComponent::StaticClass(), FName("Indicator"));
-		if (ActorsWithTag.Num() != 0)
-		{
-			UStaticMeshComponent *Indicator = Cast<UStaticMeshComponent>(ActorsWithTag[0]);
-			if (Indicator != nullptr)
-				Indicator->SetVisibility(IsInMaintenance);
-		}
+	TArray<UActorComponent *> ActorsWithTag = GetComponentsByTag(UStaticMeshComponent::StaticClass(), FName("Indicator"));
+	if (ActorsWithTag.Num() != 0)
+	{
+		UStaticMeshComponent *Indicator = Cast<UStaticMeshComponent>(ActorsWithTag[0]);
+		if (Indicator != nullptr)
+			Indicator->SetVisibility(IsBlocked);
 	}
 }

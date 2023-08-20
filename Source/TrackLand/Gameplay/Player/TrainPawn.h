@@ -1,6 +1,8 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Animation/AnimMontage.h"
+#include "TrainComponent.h"
 #include "TrainPawn.generated.h"
 
 UCLASS()
@@ -18,9 +20,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable)
-	void SwitchToNewTrack(AActor *Track, bool IsBackwards);
-
 	UPROPERTY(BlueprintReadOnly)
 	int GearIndex = 1;
 	UPROPERTY(BlueprintReadOnly)
@@ -31,12 +30,9 @@ public:
 	bool Whistling;
 
 	AActor *CurrentTrack;
+	UTrainComponent* TrainComponent;
 
 private:
-	void OverlapTracks();
-	void MoveForward();
-	void MoveBackwards();
-
 	void AcceleratePressed();
 	void SlowPressed();
 	void SwitchRight();
@@ -44,10 +40,6 @@ private:
 	void Whistle();
 	void StopWhistle();
 
-	void MoveForward(float DeltaSeconds);
-	void MoveBackwards(float DeltaSeconds);
-
-	void LookToNextWaypoint(bool Inverse, float DeltaTime);
 	void RecoverTrainControl();
 
 	int WaypointIndex = 0;
@@ -55,6 +47,7 @@ private:
 	TArray<FVector> TrackWaypoints;
 	bool IsStucked = false;
 	float TargetSpeed = 0;
+	USkeletalMeshComponent* SkeletalMesh;
 
 	UPROPERTY(EditAnywhere)
 	float ACCELERATION_RATE = 0.2;
@@ -63,5 +56,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TArray<float> SPEEDS = {20, 0, 20, 40, 60};
 	UPROPERTY(EditAnywhere)
-	double STUCK_TIME = 1.5;
+	double STUCK_TIME = 2.3;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* StuckedMontage;
 };
